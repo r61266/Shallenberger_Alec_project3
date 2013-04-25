@@ -1,8 +1,8 @@
 // JavaScript Document
 // Alec Shallenberger
-// April 17, 2013
+// April 24, 2013
 // Term 1304
-// VFW Project2
+// VFW Project3
 
 window.addEventListener("DOMContentLoaded", function(){
 		
