@@ -32,6 +32,7 @@ window.addEventListener("DOMContentLoaded", function(){
 		for(i=0, j=checkboxes.length; i<j; i++){
 			if(checkboxes[i].checked){
 				console.log(checkboxes[i].value);
+			return;
 			}
 		}
 	};
@@ -46,7 +47,7 @@ window.addEventListener("DOMContentLoaded", function(){
 				$('addNew').style.display = "inline";
 				break;
 			case "off":
-				$('checklsitForm').style.display = "block";
+				$('checklistForm').style.display = "block";
 				$('clear').style.display = "inline";
 				$('displayLink').style.display = "inline";
 				$('addNew').style.display = "none";
@@ -87,6 +88,7 @@ window.addEventListener("DOMContentLoaded", function(){
 		$('items').style.displau = "block";
 		for(var i=0, len=localStorage.length; i<len; i++){
 			var makeli = document.createElement('li');
+			var linksLi = document.createElement('li');
 			makeList.appendChild(makeli);
 			var key = localStorage.key(i);
 			var value = localStorage.getItem(key);
@@ -98,8 +100,51 @@ window.addEventListener("DOMContentLoaded", function(){
 				makeSubList.appendChild(makeSubli);
 				var optSubText = obj[k][0]+" "+obj[k][1];
 				makeSubli.innerHTML = optSubText;
+				makeSubList.appendChild(linksLi);
 			}
+			makeItemLinks(localStorage.key(i), linksLi);
 		}
+	}
+	
+	function makeItemLinks(key, linksLi){
+		var editLink = document.createElement('a');
+		editLink.href = "#";
+		editLink.key = key;
+		var editText = "Edit Checklist";
+		editLink.addEventListener("click", editItem)
+		editLink.innerHTML = editText;
+		linksLi.appendChild(editLink);
+		
+		var breakTag = document.createElement('br');
+		linksLi.appendChild(breakTag);
+		
+		var deleteLink = document.createElement('a');
+		deleteLink.href = "#";
+		deleteLink.key = key;
+		var deleteText = "Delete Checklist";
+		//deleteLink.addEventListener("click", deleteItem);
+		deleteLink.innerHTML = deleteText;
+		linksLi.appendChild(deleteLink);
+	}
+	
+	function editItem(){
+		var value = localStorage.getItem(this.key);
+		var item = JSON.parse(value);
+		
+		toggleControls("off");
+		
+		$('holiday').value = item.holigroup[1];
+		$('app').value = item.app[1];
+		$('mname').value = item.mname[1];
+		$('date').value = item.date[1];
+		$('amofpeople').value = item.amofpeople[1];
+		$('notes').value = item.notes[1];
+	
+		save.removeEventListener("click", storeData);
+		$('submit').value = "Edit Checklist";
+		var editSubmit = $('submit');
+		editSubmit.addEventListener("click", validate);
+		editSubmit.key = this.key;
 	}
 	
 	function clearLocal(){
@@ -113,9 +158,58 @@ window.addEventListener("DOMContentLoaded", function(){
 		}	
 	}
 	
+	function validate(e){
+		var getHoliday 	= $('holiday');
+		var getMain 	= $('mname');
+		var getdate 	= $('date');
+		var getPeople 	= $('amofpeople');
+		
+		errMsg.innerHTML = "";
+			getHoliday.style.border = "1px solid red";
+			getMain.style.border = "1px solid red";
+			getdate.style.border = "1px solid red";
+			getPeople.style.border = "1px solid red"
+		
+		var messageAry = [];
+		if(getHoliday.value === "--Choose a Holiday--"){
+			var holidayError = "Please choose a Holiday.";
+			getHoliday.style.border = "1px solid red";
+			messageAry.push(holidayError);
+		}
+		
+		if(getMain.value === ""){
+			var mainError = "Please enter a Main Meal."
+			getMain.style.border = "1px solid red";
+			messageAry.push(mainError);
+		}
+		
+		if(getdate.value === ""){
+			var dateError = "Please enter a date."
+			getdate.style.border = "1px solid red";
+			messageAry.push(dateError);
+		}
+		
+		if(getPeople.value === ""){
+			var peopleError = "Please enter amount of peole."
+			getPeople.style.border = "1px solid red";
+			messageAry.push(peopleError);
+		}
+		
+		if(messageAry.length >= 1){
+			for(var i=0, j=messageAry.length; i < j; i++){
+				var txt = document.createElement('li');
+				txt.innerHTML = messageAry[i];
+				errMsg.appendChild(txt);
+			}		
+		}
+		e.preventDefault();
+		return false;
+		
+	}
 	
 	//Variable defualts
-	var specHoliday = ["--Choose a Holiday--", "Christmas", "Thanksgiving", "Easter", "Hanukkah", "New Years", "St. Patricks", "Fourth of July"];
+	var specHoliday = ["--Choose a Holiday--", "Christmas", "Thanksgiving", "Easter", "Hanukkah", "New Years", "St. Patricks", "Fourth of July"],
+	errMsg = $('errors');
 		
 	
 	
@@ -127,7 +221,7 @@ window.addEventListener("DOMContentLoaded", function(){
 	var clearLink = $('clear');
 	clearLink.addEventListener("click", clearLocal);
 	var save = $('submit');
-	save.addEventListener("click", storeData);
+	save.addEventListener("click", validate);
 	
 	
 });
