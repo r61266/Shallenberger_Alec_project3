@@ -59,8 +59,12 @@ window.addEventListener("DOMContentLoaded", function(){
 	}
 	
 	
-	function storeData(){
-		var id				= Math.floor(Math.random()*14685325);
+	function storeData(key){
+		if(!key){
+			var id				= Math.floor(Math.random()*14685325);
+		}else{
+			id = key;
+		}
 		sideValue();
 		var item			= {};
 			item.holigroup	= ["Holiday:", $('holiday').value];
@@ -122,7 +126,7 @@ window.addEventListener("DOMContentLoaded", function(){
 		deleteLink.href = "#";
 		deleteLink.key = key;
 		var deleteText = "Delete Checklist";
-		//deleteLink.addEventListener("click", deleteItem);
+		deleteLink.addEventListener("click", deleteItem);
 		deleteLink.innerHTML = deleteText;
 		linksLi.appendChild(deleteLink);
 	}
@@ -147,6 +151,17 @@ window.addEventListener("DOMContentLoaded", function(){
 		editSubmit.key = this.key;
 	}
 	
+	function deleteItem(){
+		var ask = confirm("Are you sure you want to delete this checklist?");
+		if(ask){
+			localStorage.removeItem(this.key);
+			alert("Checklist was deleted.");
+			window.location.reload();	
+		}else{	
+			alert("Contact was NOT deleted.")
+		}
+	}
+	
 	function clearLocal(){
 		if(localStorage.length === 0){
 			alert("There is no data to clear.")
@@ -165,10 +180,10 @@ window.addEventListener("DOMContentLoaded", function(){
 		var getPeople 	= $('amofpeople');
 		
 		errMsg.innerHTML = "";
-			getHoliday.style.border = "1px solid red";
-			getMain.style.border = "1px solid red";
-			getdate.style.border = "1px solid red";
-			getPeople.style.border = "1px solid red"
+		getHoliday.style.border = "1px solid red";
+		getMain.style.border = "1px solid red";
+		getdate.style.border = "1px solid red";
+		getPeople.style.border = "1px solid red";
 		
 		var messageAry = [];
 		if(getHoliday.value === "--Choose a Holiday--"){
@@ -201,10 +216,11 @@ window.addEventListener("DOMContentLoaded", function(){
 				txt.innerHTML = messageAry[i];
 				errMsg.appendChild(txt);
 			}		
+			e.preventDefault();
+			return false;
+		}else{
+			storeData(this.key);
 		}
-		e.preventDefault();
-		return false;
-		
 	}
 	
 	//Variable defualts
