@@ -27,15 +27,15 @@ window.addEventListener("DOMContentLoaded", function(){
 		selectLi.appendChild(makeSelect); 	
 	}
 
-	var checkboxes = document.getElementById("checklistForm").dishes;
-	var sideValue = function(){
+	
+	function getCheckboxValue(){
+		var checkboxes = document.getElementById("checklistForm").dishes;
 		for(i=0, j=checkboxes.length; i<j; i++){
 			if(checkboxes[i].checked){
-				console.log(checkboxes[i].value);
-			return;
+				sideValue = checkboxes[i].value;
 			}
 		}
-	};
+	}
 	
 				
 	function toggleControls(n){
@@ -65,7 +65,7 @@ window.addEventListener("DOMContentLoaded", function(){
 		}else{
 			id = key;
 		}
-		sideValue();
+		getCheckboxValue();
 		var item			= {};
 			item.holigroup	= ["Holiday:", $('holiday').value];
 			item.app		= ["Appitzer:", $('app').value];
@@ -205,7 +205,7 @@ window.addEventListener("DOMContentLoaded", function(){
 		}
 		
 		if(getPeople.value === ""){
-			var peopleError = "Please enter amount of peole."
+			var peopleError = "Please enter amount of people."
 			getPeople.style.border = "1px solid red";
 			messageAry.push(peopleError);
 		}
@@ -225,6 +225,7 @@ window.addEventListener("DOMContentLoaded", function(){
 	
 	//Variable defualts
 	var specHoliday = ["--Choose a Holiday--", "Christmas", "Thanksgiving", "Easter", "Hanukkah", "New Years", "St. Patricks", "Fourth of July"],
+	sideValue,
 	errMsg = $('errors');
 		
 	
